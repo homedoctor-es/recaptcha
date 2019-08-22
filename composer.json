@@ -1,13 +1,13 @@
 {
-    "name": "greggilbert/recaptcha",
+    "name": "kuttumiah/recaptcha",
     "description": "reCAPTCHA Validator for Laravel 5",
 	"keywords": ["recaptcha", "captcha", "laravel", "laravel5"],
-	"homepage": "http://github.com/greggilbert/recaptcha",
+	"homepage": "http://github.com/kuttumiah/recaptcha",
 	"license": "MIT",
     "authors": [
         {
-            "name": "Greg Gilbert",
-            "email": "greg@greg-gilbert.com"
+            "name": "Md Robaiatul Islam",
+            "email": "robaiat.shaon@gmail.com"
         }
     ],
     "require": {
@@ -19,7 +19,7 @@
             "src/migrations"
         ],
         "psr-4": {
-            "Greggilbert\\Recaptcha\\": "src/"
+            "Kuttumiah\\Recaptcha\\": "src/"
         }
     },
     "extra": {

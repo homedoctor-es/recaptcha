@@ -1,4 +1,6 @@
-<?php namespace Greggilbert\Recaptcha;
+<?php
+
+namespace Kuttumiah\Recaptcha;
 
 use Illuminate\Support\ServiceProvider;
 
