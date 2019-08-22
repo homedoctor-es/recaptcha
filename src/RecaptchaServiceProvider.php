@@ -59,6 +59,10 @@ class RecaptchaServiceProvider extends ServiceProvider
     protected function bindRecaptcha()
     {
         $this->app->bind('recaptcha.service', function () {
+            if (app('config')->get('recaptcha.version', false) === 3 || app('config')->get('recaptcha.v3', false)) {
+                return new Service\CheckRecaptchaV3;
+            }
+
             if (app('config')->get('recaptcha.version', false) === 2 || app('config')->get('recaptcha.v2', false)) {
                 return new Service\CheckRecaptchaV2;
             }
