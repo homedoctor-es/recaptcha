@@ -1,13 +1,12 @@
-Recaptcha
-=========
+# Recaptcha
 
-A reCAPTCHA Validator for Laravel 5. 
+A reCAPTCHA Validator for Laravel 5.
+
+This is a forked version of the [reCaptcha package](https://github.com/greggilbert/recaptcha) for same functionality but with support for reCaptcha Version 3.
 
 > (Looking for a Laravel 4 version? Pull the latest 1.x tag. For Laravel 5.0, pull the latest 2.0 tag.)
 
-## LOOKING FOR MAINTAINER(S)
-
-tldr; I don't really have time to maintain this package on my own, so I'm looking for help. If you're interested, leave a note on #146. Thanks!
+> For reCaptcha v3 support use `dev-master` from this repository.
 
 ## Installation
 
@@ -16,31 +15,75 @@ Add the following line to the `require` section of `composer.json`:
 ```json
 {
     "require": {
-        "kuttumiah/recaptcha": "dev-master"
+        "kuttumiah/recaptcha": "dev-master",
     }
 }
 ```
 
+or run the command below in terminal
+
+```bash
+$ composer require "kuttumiah/recaptcha:dev-master"
+```
+
 ## Setup
 
-1. In `/config/app.php`, add the following to `providers`:
-  
-  ```
-  Kuttumiah\Recaptcha\RecaptchaServiceProvider::class,
-  ```
-  and the following to `aliases`:
-  ```
-  'Recaptcha' => Kuttumiah\Recaptcha\Facades\Recaptcha::class,
-  ```
+1. If you are using **Laravel 5.5+** and using package auto-discovery, you can skip this step. For older versions or if you have
+   disabled package auto-discovery continue with this step.
+
+   In `/config/app.php`, add the following to `providers`:
+   ```php
+   Kuttumiah\Recaptcha\RecaptchaServiceProvider::class,
+   ```
+
+   and the following to `aliases`:
+
+   ```php
+   'Recaptcha' => Kuttumiah\Recaptcha\Facades\Recaptcha::class,
+   ```
+
 2. Run `php artisan vendor:publish --provider="Kuttumiah\Recaptcha\RecaptchaServiceProvider"`.
+
 3. In `/config/recaptcha.php`, enter your reCAPTCHA public and private keys.
-  * If you are not using the most recent version of reCAPTCHA, set `version` to 1. 
-  * If you are upgrading to v2 of reCAPTCHA, note that your keys from the previous version will not work, and you need to generate a new set in [the reCAPTCHA admin](https://www.google.com/recaptcha/admin).
+   * If you are not using the most recent version of reCAPTCHA, set `version` to 2 or 1.
+   * If you are upgrading to v3 of reCAPTCHA, note that your keys from the previous version will not work, and you need to generate a new set in [the reCAPTCHA admin](https://www.google.com/recaptcha/admin).
+
 4. The package ships with a default validation message, but if you want to customize it, add the following line into `resources/lang/[lang]/validation.php`:
-  
-  ```php
-      'recaptcha' => 'The :attribute field is not correct.',
-  ```
+
+   ```php
+       'recaptcha' => 'The :attribute field is not correct.',
+   ```
+
+### Migrating from `greggilbert/recaptcha` package
+
+1. In `/config/app.php`, remove the following from `providers`:
+
+   ```php
+   Greggilbert\Recaptcha\RecaptchaServiceProvider::class,
+   ```
+
+   and the following from `aliases`:
+
+   ```php
+   'Recaptcha' => Greggilbert\Recaptcha\Facades\Recaptcha::class,
+   ```
+2. Remove the following line from the `require` section of `composer.json`:
+
+   ```json
+   {
+       "require": {
+           "greggilbert/recaptcha": "dev-master",
+       }
+   }
+   ```
+
+4. Run the command below in terminal
+
+   ```bash
+   $ composer update
+   ```
+
+5. Follow the [Installation](#installation) and [Setup](#setup) steps.
 
 ## Usage
 
