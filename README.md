@@ -85,6 +85,8 @@ $ composer require "kuttumiah/recaptcha:dev-master"
 
 5. Follow the [Installation](#installation) and [Setup](#setup) steps.
 
+**Note:** If you face any issue error while migrating please check the [Troubleshoot](#troubleshoot) section.
+
 ## Usage
 
 ### v2 (No Captcha)
@@ -157,6 +159,30 @@ or you can pass it in through the Form option:
 
 ```php
 echo Recaptcha::render([ 'template' => 'customCaptcha' ]);
+```
+
+## Troubleshoot
+While migrating from `greggilbert/recaptcha` package you might end up raising an error like below
+
+
+> \> @php artisan package:discover
+>
+> In ProviderRepository.php line 208:
+>
+> &nbsp;&nbsp;&nbsp;&nbsp;Class 'Greggilbert\Recaptcha\RecaptchaServiceProvider' not found<br/><br/>
+>
+>
+>  <span style="background:red; color:white">Script @php artisan package:discover handling the post-autoload-dump event returned with
+>  error code 1</span>
+
+To resolve the issue I found a helpful resource on [Stack Overflow](https://stackoverflow.com/a/53705743/2117868) which can fix this issue. Attaching the solution here for convenience.
+
+Go to your `project > bootstrap > cache > config.php` file. Remove the provider and aliases from the cached array manually.
+
+Or simply remove the file and generate again by running the command below,
+
+```bash
+$ php artisan config:cache
 ```
 
 ### v1 customization
