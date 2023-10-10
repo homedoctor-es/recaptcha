@@ -38,7 +38,16 @@ class RecaptchaServiceProvider extends ServiceProvider
     public function addValidator()
     {
         $this->app->validator->extendImplicit('recaptcha', function ($attribute, $value, $parameters) {
-            $captcha   = app('recaptcha.service');
+            $config = $this->app['config']->get('recaptcha');
+
+            $connection = $config['default'];
+            if (1 === count($parameters)) {
+                if (false === isset($config['connections'][$parameters[0]])) {
+                    throw new \InvalidArgumentException('Invalid recaptcha config connection');
+                }
+                $connection = $parameters[0];
+            }
+            $captcha = app('recaptcha.service', $config['connections'][$connection]);
             $challenge = app('request')->input($captcha->getResponseKey());
 
             return $captcha->check($challenge, $value);
@@ -58,27 +67,28 @@ class RecaptchaServiceProvider extends ServiceProvider
 
     protected function bindRecaptcha()
     {
-        $this->app->bind('recaptcha.service', function () {
-            if (app('config')->get('recaptcha.version', false) === 3 || app('config')->get('recaptcha.v3', false)) {
-                return new Service\CheckRecaptchaV3;
+        $this->app->bind('recaptcha.service', function ($app, $config) {
+            switch ($config['version']) {
+                case 3:
+                    return new Service\CheckRecaptchaV3($config);
+                case 2:
+                    return new Service\CheckRecaptchaV2($config);
+                default:
+                    return new Service\CheckRecaptcha($config);
             }
-
-            if (app('config')->get('recaptcha.version', false) === 2 || app('config')->get('recaptcha.v2', false)) {
-                return new Service\CheckRecaptchaV2;
-            }
-
-            return new Service\CheckRecaptcha;
         });
 
         $this->app->bind('recaptcha', function () {
-            return new Recaptcha($this->app->make('recaptcha.service'), app('config')->get('recaptcha'));
-        });
+            $config = $this->app['config']->get('recaptcha');
 
+            $connectionConfig = $config['connections'][$config['default']];
+            return new Recaptcha($this->app->make('recaptcha.service', $connectionConfig), $connectionConfig);
+        });
     }
 
     protected function handleConfig()
     {
-        $packageConfig     = __DIR__ . '/config/recaptcha.php';
+        $packageConfig = __DIR__ . '/config/recaptcha.php';
         $destinationConfig = config_path('recaptcha.php');
 
         $this->publishes([
@@ -97,4 +107,5 @@ class RecaptchaServiceProvider extends ServiceProvider
             'recaptcha',
         ];
     }
+
 }

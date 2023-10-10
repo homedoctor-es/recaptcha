@@ -5,7 +5,7 @@ namespace Kuttumiah\Recaptcha\Service;
 /**
  * Handle sending out and receiving a response to validate the captcha
  */
-class CheckRecaptcha implements RecaptchaInterface
+class CheckRecaptcha extends BaseRecaptcha
 {
 
     const SERVER = 'http://www.google.com/recaptcha/api';
@@ -24,10 +24,10 @@ class CheckRecaptcha implements RecaptchaInterface
     public function check($challenge, $response)
     {
         $parameters = http_build_query([
-            'privatekey' => value(app('config')->get('recaptcha.private_key')),
-            'remoteip'   => app('request')->getClientIp(),
-            'challenge'  => $challenge,
-            'response'   => $response,
+            'privatekey' => value($this->getConfigByKey('private_key')),
+            'remoteip' => app('request')->getClientIp(),
+            'challenge' => $challenge,
+            'response' => $response,
         ]);
 
         $http_request = "POST " . self::ENDPOINT . " HTTP/1.0\r\n";
@@ -40,13 +40,13 @@ class CheckRecaptcha implements RecaptchaInterface
 
         $apiResponse = '';
 
-        if (false == ( $fs = @fsockopen(self::VERIFY_SERVER, 80) )) {
+        if (false == ($fs = @fsockopen(self::VERIFY_SERVER, 80))) {
             throw new \Exception('Could not open socket');
         }
 
         fwrite($fs, $http_request);
 
-        while ( ! feof($fs)) {
+        while (!feof($fs)) {
             $apiResponse .= fgets($fs, 1160); // One TCP-IP packet
         }
 
@@ -54,9 +54,9 @@ class CheckRecaptcha implements RecaptchaInterface
 
         $apiResponse = explode("\r\n\r\n", $apiResponse, 2);
 
-        list( $passed, $responseText ) = explode("\n", $apiResponse[1]);
+        list($passed, $responseText) = explode("\n", $apiResponse[1]);
 
-        return ( 'true' === trim($passed) );
+        return ('true' === trim($passed));
     }
 
     public function getTemplate()
@@ -68,4 +68,5 @@ class CheckRecaptcha implements RecaptchaInterface
     {
         return 'recaptcha_challenge_field';
     }
+
 }
